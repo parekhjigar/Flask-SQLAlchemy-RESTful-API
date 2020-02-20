@@ -17,3 +17,8 @@ Set the current working directory to the new project directory and run the follo
 
 	`$ source venv/bin/activate`
 	
+### Installing Flask-Marshmallow
+
+Flask-Marshmallow is a thin integration layer for Flask and marshmallow (an object serialization/deserialization library) which integrates with Flask-SQLAlchemy to serialize a collection of objects of SQLAlchemy data rows into textual representation, in this case to JSON.
+
+	`pip install flask-marshmallow`
