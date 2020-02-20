@@ -95,11 +95,20 @@ def url_variables(name: str, workexp: int):
     else:
         return jsonify(message="Welcome " + name + ', you are eligible for the job!')
 
+
 # Employees Route
 @app.route('/employees', methods=['GET'])
 def employees():
     emps_list = Emp.query.all()
     result = emps_schema.dump(emps_list)
+    return jsonify(result)
+
+
+# Departments Route
+@app.route('/departments', methods=['GET'])
+def departments():
+    departments_list = Department.query.all()
+    result = departments_schema.dump(departments_list)
     return jsonify(result)
 
 
