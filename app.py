@@ -95,14 +95,14 @@ def url_variables(name: str, workexp: int):
     else:
         return jsonify(message="Welcome " + name + ', you are eligible for the job!')
 
-
+'''
 # Employees Route
 @app.route('/employees', methods=['GET'])
 def employees():
     emps_list = Emp.query.all()
     result = emps_schema.dump(emps_list)
     return jsonify(result)
-
+'''
 
 # Departments Route
 @app.route('/departments', methods=['GET'])
@@ -110,6 +110,23 @@ def departments():
     departments_list = Department.query.all()
     result = departments_schema.dump(departments_list)
     return jsonify(result)
+
+
+# Register Route
+@app.route('/register', methods=['POST'])
+def register():
+    email = request.form['email']
+    test = Emp.query.filter_by(email=email).first()
+    if test:
+        return jsonify(message = 'This email already exists!'), 409
+    else:
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        password = request.form['password']
+        emp = Emp(first_name=first_name, last_name=last_name, email=email, password=password)
+        db.session.add(emp)
+        db.session.commit()
+        return jsonify(message='Employee added successfully!'), 201
 
 
 # Database Models
