@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Float
 import os
 from flask_marshmallow import Marshmallow
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 
 
 app = Flask(__name__)
@@ -11,11 +12,16 @@ app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'emp.db')
 
+app.config['JWT_SECRET_KEY'] = 'some-secret-key'
+
 # Instantiating SQLAlchemy
 db = SQLAlchemy(app)
 
 # Instantiating Marshmallow
 ma = Marshmallow(app)
+
+# Instantiating JWT
+jwt = JWTManager(app)
 
 # CLI Command to create DB
 @app.cli.command('db_create')
@@ -127,6 +133,24 @@ def register():
         db.session.add(emp)
         db.session.commit()
         return jsonify(message='Employee added successfully!'), 201
+
+
+# Login route
+@app.route('/login', methods=['POST'])
+def login():
+    if request.is_json:
+        email = request.json['email']
+        password = request.json['password']
+    else:
+        email = request.form['email']
+        password = request.form['password']
+
+    test = Emp.query.filter_by(email=email, password=password).first()
+    if test:
+        access_token = create_access_token(identity=email)
+        return jsonify(message='Login successful!', access_token=access_token)
+    else:
+        return jsonify(message='Incorrect email or password'), 401
 
 
 # Database Models
