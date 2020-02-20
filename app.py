@@ -6,24 +6,32 @@ from flask_marshmallow import Marshmallow
 
 
 app = Flask(__name__)
+
+# Initializing SQLite Database
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'emp.db')
 
+# Instantiating SQLAlchemy
 db = SQLAlchemy(app)
+
+# Instantiating Marshmallow
 ma = Marshmallow(app)
 
+# CLI Command to create DB
 @app.cli.command('db_create')
 def db_create():
     db.create_all()
     print('Database created')
 
 
+# CLI Command to drop DB
 @app.cli.command('db_drop')
 def db_drop():
     db.drop_all()
     print('Database dropped')
 
 
+# CLI Command to seed data to DB
 @app.cli.command('db_seed')
 def db_seed():
     emp1 = Emp(first_name='Jigar',
@@ -56,11 +64,13 @@ def db_seed():
     db.session.commit()
     print('Database seeded!')
 
+
+# Test Route
 @app.route('/test')
 def test():
     return jsonify(message='Test works!')
 
-
+# Not Found Route
 @app.route('/not_found')
 def not_found():
     return jsonify(message='Resource not found'), 404
@@ -85,9 +95,9 @@ def url_variables(name: str, workexp: int):
     else:
         return jsonify(message="Welcome " + name + ', you are eligible for the job!')
 
-
+# Employees Route
 @app.route('/employees', methods=['GET'])
-def planets():
+def employees():
     emps_list = Emp.query.all()
     result = emps_schema.dump(emps_list)
     return jsonify(result)
@@ -110,9 +120,10 @@ class Department(db.Model):
     dept_type = Column(String)
 
 
+# Database Schemas
 class EmpSchema(ma.Schema):
     class Meta:
-        fields = ('emp_d', 'first_name', 'last_name', 'email', 'password')
+        fields = ('emp_id', 'first_name', 'last_name', 'email', 'password')
 
 
 class DepartmentSchema(ma.Schema):
@@ -120,12 +131,12 @@ class DepartmentSchema(ma.Schema):
         fields = ('dept_id', 'dept_name', 'dept_type')
 
 
+# Instantiating Schemes
 emp_schema = EmpSchema()
 emps_schema = EmpSchema(many=True)
 
 department_scheme = DepartmentSchema()
 departments_schema = DepartmentSchema(many=True)
-
 
 
 if __name__ == '__main__':
