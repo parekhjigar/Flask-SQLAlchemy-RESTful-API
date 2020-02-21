@@ -182,6 +182,36 @@ def retrieve_password():
         return jsonify(message='This email does not exist!')
 
 
+# Department details by dept_id route
+@app.route('/department_details/<int:dept_id>', methods=['GET'])
+def department_details(dept_id: int):
+    department = Department.query.filter_by(dept_id=dept_id).first()
+    if department:
+        result = department_schema.dump(department)
+        return jsonify(result.data)
+    else:
+        return jsonify(message='This department does not exist'), 404
+
+
+# Add department after logging in route
+@app.route('/add_department', methods=['POST'])
+@jwt_required
+def add_department():
+    dept_name = request.form['dept_name']
+    test = Department.query.filter_by(dept_name=dept_name).first()
+    if test:
+        return jsonify(message='There is already a department by that name!'), 409
+    else:
+        dept_type = request.form['dept_type']
+
+    new_department = Department(dept_name=dept_name,
+                                dept_type=dept_type)
+
+    db.session.add(new_department)
+    db.session.commit()
+    return jsonify(message='Department added!'), 201
+
+
 # Database Models
 class Emp(db.Model):
     __tablename__ = 'emp'
@@ -214,7 +244,7 @@ class DepartmentSchema(ma.Schema):
 emp_schema = EmpSchema()
 emps_schema = EmpSchema(many=True)
 
-department_scheme = DepartmentSchema()
+department_schema = DepartmentSchema()
 departments_schema = DepartmentSchema(many=True)
 
 
