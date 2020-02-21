@@ -212,6 +212,21 @@ def add_department():
     return jsonify(message='Department added!'), 201
 
 
+# Update department route
+@app.route('/update_department', methods=['PUT'])\
+@jwt_required
+def update_department():
+    dept_id = int(request.form['dept_id'])
+    department = Department.query.filter_by(dept_id=dept_id).first()
+    if department:
+        department.dept_name = request.form['dept_name']
+        department.dept_type = request.form['dept_type']
+        db.session.commit()
+        return jsonify(message='Department updated successfully!'), 202
+    else:
+        return jsonify(message='This department does not exist!'), 404
+
+
 # Database Models
 class Emp(db.Model):
     __tablename__ = 'emp'
