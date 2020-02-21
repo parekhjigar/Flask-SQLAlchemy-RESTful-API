@@ -213,7 +213,7 @@ def add_department():
 
 
 # Update department route
-@app.route('/update_department', methods=['PUT'])\
+@app.route('/update_department', methods=['PUT'])
 @jwt_required
 def update_department():
     dept_id = int(request.form['dept_id'])
@@ -223,6 +223,19 @@ def update_department():
         department.dept_type = request.form['dept_type']
         db.session.commit()
         return jsonify(message='Department updated successfully!'), 202
+    else:
+        return jsonify(message='This department does not exist!'), 404
+
+
+# Remove department route
+@app.route('/remove_department/<int:dept_id>', methods=['DELETE'])
+@jwt_required
+def remove_department(dept_id: int):
+    department = Department.query.filter_by(dept_id=dept_id).first()
+    if department:
+        db.session.delete(department)
+        db.session.commit()
+        return jsonify(message='Department deleted successfully!'), 202
     else:
         return jsonify(message='This department does not exist!'), 404
 
