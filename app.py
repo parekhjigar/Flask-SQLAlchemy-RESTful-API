@@ -17,12 +17,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'emp.db')
 
 # JWT configuration
-app.config['JWT_SECRET_KEY'] = 'some-secret-key'
+# app.config['JWT_SECRET_KEY'] = 'some-secret-key'
 
 # Flask-Mail Configuration
-app.config['MAIL_SERVER'] = 'smtp.mailtrap.io'
-app.config['MAIL_USERNAME'] = os.environ['MAIL_USERNAME']
-app.config['MAIL_PASSWORD'] = os.environ['MAIL_PASSWORD']
+# app.config['MAIL_SERVER'] = 'smtp.mailtrap.io'
+# app.config['MAIL_USERNAME'] = os.environ['MAIL_USERNAME']
+# app.config['MAIL_PASSWORD'] = os.environ['MAIL_PASSWORD']
 
 
 # Instantiating SQLAlchemy
@@ -32,7 +32,7 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 # Instantiating JWT
-jwt = JWTManager(app)
+# jwt = JWTManager(app)
 
 # Instantiating Flask_Mail
 mail = Mail(app)
@@ -195,7 +195,7 @@ def department_details(dept_id: int):
 
 # Add department after logging in route
 @app.route('/add_department', methods=['POST'])
-@jwt_required
+# @jwt_required
 def add_department():
     dept_name = request.form['dept_name']
     test = Department.query.filter_by(dept_name=dept_name).first()
@@ -229,7 +229,7 @@ def update_department():
 
 # Remove department route
 @app.route('/remove_department/<int:dept_id>', methods=['DELETE'])
-@jwt_required
+# @jwt_required
 def remove_department(dept_id: int):
     department = Department.query.filter_by(dept_id=dept_id).first()
     if department:
